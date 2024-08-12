@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "snowflake-homework"
+version = "0.1.0"
+description = "Snowflake homework"
+authors = ["Jon Osborn <osborn.jon.20@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.112.0"
+uvicorn = {extras = ["standard"], version = "^0.30.5"}
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.2"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
