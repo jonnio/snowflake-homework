@@ -28,5 +28,20 @@ async def root():
 @app.get('/tables', tags=['root'])
 async def get_tables():
     cursor = con.cursor()
-    sql = cursor.execute("SHOW TERSE TABLES")
+    sql = cursor.execute("SHOW TERSE TABLES IN SCHEMA TPCH_SF10")
     return sorted(set([t[1] for t in sql]))
+
+
+@app.get('/customer', tags=['customer'])
+async def get_customers():
+    cursor = con.cursor()
+    sql = cursor.execute("SELECT * FROM TPCH_SF10.CUSTOMER LIMIT 10")
+    return sql.fetchall()
+
+
+@app.get('/customer/{customer_id}', tags=['root'])
+async def get_customer(customer_id: str):
+    print(customer_id)
+    cursor = con.cursor()
+    sql = cursor.execute("SELECT * FROM TPCH_SF10.CUSTOMER WHERE 1=1 and C_CUSTKEY=%s", (customer_id,))
+    return sql.fetchall()
