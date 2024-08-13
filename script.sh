@@ -13,3 +13,5 @@ gcloud run deploy snowflake-homework --port 8080 --source .
 
  poetry run uvicorn app.main:app --reload
 
+
+https://zn23616.us-east-2.aws.snowflakecomputing.com
