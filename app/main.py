@@ -1,7 +1,12 @@
+import decimal
 import os
+import json
 
 import snowflake.connector
 from fastapi import FastAPI
+from fastapi.encoders import jsonable_encoder
+from snowflake.connector import DictCursor
+from starlette.responses import JSONResponse
 
 app = FastAPI()
 
@@ -34,7 +39,7 @@ async def get_tables():
 
 @app.get('/customer', tags=['customer'])
 async def get_customers():
-    cursor = con.cursor()
+    cursor = con.cursor(cursor_class=DictCursor)
     sql = cursor.execute("SELECT * FROM TPCH_SF10.CUSTOMER LIMIT 10")
     return sql.fetchall()
 
@@ -42,6 +47,6 @@ async def get_customers():
 @app.get('/customer/{customer_id}', tags=['root'])
 async def get_customer(customer_id: str):
     print(customer_id)
-    cursor = con.cursor()
+    cursor = con.cursor(cursor_class=DictCursor)
     sql = cursor.execute("SELECT * FROM TPCH_SF10.CUSTOMER WHERE 1=1 and C_CUSTKEY=%s", (customer_id,))
     return sql.fetchall()
