@@ -1,0 +1,2 @@
+# Include the target file for GCP builds
+!build/libs/*.jar
