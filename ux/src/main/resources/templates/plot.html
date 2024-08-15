@@ -27,19 +27,23 @@
     const height = 500;
     const marginTop = 30;
     const marginRight = 0;
-    const marginBottom = 30;
-    const marginLeft = 40;
+    const marginBottom = 60;
+    const marginLeft = 64;
 
     function make_plot() {
         // Declare the x (horizontal position) scale.
         const x = d3.scaleBand()
-            .domain(d3.groupSort(data, ([d]) => -d.frequency, (d) => d.letter)) // descending frequency
+            //.domain(d3.groupSort(data, ([d]) => -d.TOTAL_ORDERS, (d) => d.YEAR_QUARTER)) // descending frequency
+            .domain(data.map((d) => d.YEAR_QUARTER))
             .range([marginLeft, width - marginRight])
             .padding(0.1);
 
         // Declare the y (vertical position) scale.
+        y_extent = d3.extent(data, (d) => d.TOTAL_ORDERS);
+        y_extent = [y_extent[0] * 0.99, y_extent[1]]
         const y = d3.scaleLinear()
-            .domain([0, d3.max(data, (d) => d.frequency)])
+            //.domain([0, d3.max(data, (d) => d.TOTAL_ORDERS)])
+            .domain(y_extent)
             .range([height - marginBottom, marginTop]);
 
         // Create the SVG container.
@@ -57,53 +61,40 @@
             .selectAll()
             .data(data)
             .join("rect")
-            .attr("x", (d) => x(d.letter))
-            .attr("y", (d) => y(d.frequency))
-            .attr("height", (d) => y(0) - y(d.frequency))
+            .attr("x", (d) => x(d.YEAR_QUARTER))
+            .attr("y", (d) => y(d.TOTAL_ORDERS))
+            .attr("height", (d) => y(y_extent[0]) - y(d.TOTAL_ORDERS))
+            //.attr("height", (d) => 100)
             .attr("width", x.bandwidth());
 
         // Add the x-axis and label.
         svg.append("g")
             .attr("transform", `translate(0,${height - marginBottom})`)
-            .call(d3.axisBottom(x).tickSizeOuter(0));
+            .call(d3.axisBottom(x).tickSizeOuter(0))
+            .selectAll("text")
+            .style("text-anchor", "end")
+            .attr("dx", "-.8em")
+            .attr("dy", ".15em")
+            .attr("transform", "rotate(-65)");
+
 
         // Add the y-axis and label, and remove the domain line.
         svg.append("g")
             .attr("transform", `translate(${marginLeft},0)`)
-            .call(d3.axisLeft(y).tickFormat((y) => (y * 100).toFixed()))
+            .call(d3.axisLeft(y).tickFormat((y) => (y).toFixed()))
             .call(g => g.select(".domain").remove())
             .call(g => g.append("text")
                 .attr("x", -marginLeft)
                 .attr("y", 10)
                 .attr("fill", "currentColor")
                 .attr("text-anchor", "start")
-                .text("↑ Frequency (%)"));
+                .text("Total Orders"));
     }
 
-    axios.get('https://snowflake-homework-bnzzfzeeua-ue.a.run.app/customer/list')
+    axios.get('https://snowflake-homework-bnzzfzeeua-ue.a.run.app/orders/plot')
         .then(response => {
             console.log("!!!!!!!!!!!!!!", response.data);
-            data = [{letter: "A", frequency: 0.08167},
-                {letter: "B", frequency: 0.01492},
-                {letter: "C", frequency: 0.02782},
-                {letter: "D", frequency: 0.04253},
-                {letter: "E", frequency: 0.12702},
-                {letter: "F", frequency: 0.02288},
-                {letter: "G", frequency: 0.02015},
-                {letter: "H", frequency: 0.06094},
-                {letter: "I", frequency: 0.06966},
-                {letter: "J", frequency: 0.00153},
-                {letter: "K", frequency: 0.00772},
-                {letter: "L", frequency: 0.04025},
-                {letter: "M", frequency: 0.02406},
-                {letter: "N", frequency: 0.06749},
-                {letter: "O", frequency: 0.07507},
-                {letter: "P", frequency: 0.01929},
-                {letter: "Q", frequency: 0.00095},
-                {letter: "R", frequency: 0.05987},
-                {letter: "S", frequency: 0.06327},
-                {letter: "T", frequency: 0.09056},
-            ]
+            data = response.data
             make_plot();
         })
         .catch(error => {

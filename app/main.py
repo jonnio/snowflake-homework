@@ -131,3 +131,17 @@ async def get_order(order_id: int):
                       " WHERE L_ORDERKEY = %s"
                       " ORDER BY L_PARTKEY"), (order_id,))
             .fetchall())
+
+
+@app.get('/orders/plot', tags=['order'], description='Data points for plotting orders by quarter')
+async def plot_orders():
+    return (con
+            .cursor(cursor_class=DictCursor)
+            .execute(("SELECT CONCAT(YEAR(O_ORDERDATE), ' Q', QUARTER(O_ORDERDATE)) AS YEAR_QUARTER"
+                      ",COUNT(O_ORDERKEY) as TOTAL_ORDERS"
+                      " FROM ORDERS"
+                      " WHERE O_ORDERDATE < '1998-01-01'"
+                      " GROUP BY YEAR_QUARTER"
+                      " ORDER BY YEAR_QUARTER"
+                      ), )
+            .fetchall())

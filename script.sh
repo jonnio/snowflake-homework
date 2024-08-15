@@ -14,4 +14,12 @@ gcloud run deploy snowflake-homework --port 8080 --source .
  poetry run uvicorn app.main:app --reload
 
 
+#### UX / UI DEPLOY
+
+gcloud run deploy snowflake-homework-ux --port 8081 --source ./ux
+
+./ux/gradlew -p ux clean build && gcloud run deploy snowflake-homework-ux --port 8081 --source ./ux
+
+
+
 https://zn23616.us-east-2.aws.snowflakecomputing.com
