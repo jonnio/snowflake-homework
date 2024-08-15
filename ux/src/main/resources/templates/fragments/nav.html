@@ -19,6 +19,9 @@
             <li class="nav-item" th:classappend="${module == 'customers' ? 'active' : ''}">
                 <a class="nav-link" href="#" th:href="@{/customers}">Customers</a>
             </li>
+            <li class="nav-item" th:classappend="${module == 'plot' ? 'active' : ''}">
+                <a class="nav-link" href="#" th:href="@{/plot}">Plot</a>
+            </li>
         </ul>
         <!-- ml-auto still works just fine-->
         <div class="navbar-nav ms-auto mb-2 mb-lg-0">

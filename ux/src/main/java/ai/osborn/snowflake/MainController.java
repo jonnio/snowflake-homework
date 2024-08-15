@@ -24,4 +24,10 @@ public class MainController {
         model.addAttribute("module", "customers");
         return "customers";
     }
+
+    @GetMapping("/plot")
+    public String plot(Model model) {
+        model.addAttribute("module", "plot");
+        return "plot";
+    }
 }
