@@ -1,6 +1,8 @@
 package ai.osborn.snowflake;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,7 +14,7 @@ public class MainController {
     private String apiBaseUrl;
 
     @GetMapping("/")
-    public String index(Model model) {
+    public String index(@AuthenticationPrincipal OAuth2User principal, Model model) {
         model.addAttribute("apiBaseUrl", apiBaseUrl);
         model.addAttribute("module", "home");
         return "index";

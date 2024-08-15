@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:sec="http://www.w3.org/1999/xhtml">
 <head>
 </head>
 <body>
@@ -28,13 +28,12 @@
             <a class="nav-link active text-nowrap" aria-current="page" href="#">
                 <div class="text-nowrap">
                     <span>Hello</span>
-                    <span sec:authentication="principal.firstName"></span>
-                    <span class="fw-lighter">(<span sec:authentication="principal.emailAddress"></span>)</span>
+                    <span sec:authentication="principal.name"></span>
+<!--                    <span class="fw-lighter">(<span sec:authentication="principal.emailAddress"></span>)</span>-->
                 </div>
             </a>
             <a sec:authorize="isAuthenticated()" class="nav-link" href="logout" tabindex="-1" aria-disabled="true">Logout</a>
-            <a sec:authorize="!isAuthenticated()" class="nav-link disabled" href="#" tabindex="-1"
-               aria-disabled="true">Logout</a>
+            <a sec:authorize="!isAuthenticated()" class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Logout</a>
         </div>
     </div>
 </nav>
