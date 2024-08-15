@@ -2,6 +2,7 @@ import os
 
 import snowflake.connector
 from fastapi import FastAPI, Query
+from fastapi.middleware.cors import CORSMiddleware
 from snowflake.connector import DictCursor
 
 from app.pagination import get_page, SnowflakePage
@@ -35,6 +36,20 @@ app = FastAPI(title="Snowflake Homework - Osborn",
                   "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
               }, )
 
+origins = [
+    "http://localhost",
+    "http://localhost:8081",
+    "https://snowflake-homework-ux-bnzzfzeeua-ue.a.run.app",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 con = snowflake.connector.connect(
     user='HOMEWORK_USER',
     password=os.environ.get('SNOWFLAKE_PASSWORD', 'NONE'),
@@ -63,7 +78,7 @@ async def get_tables():
 
 
 @app.get('/customer/list', tags=['customer'], description="List customers by page")
-async def get_customers(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=0, ge=0)) -> SnowflakePage:
+async def get_customers(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=1, gt=0)) -> SnowflakePage:
     return get_page(con,
                     "SELECT * FROM CUSTOMER ORDER BY C_CUSTKEY",
                     limit,
@@ -80,7 +95,7 @@ async def get_customer(customer_id: str):
 
 
 @app.get('/order/summary', tags=['order'], description="Get a summary of orders by customer")
-async def get_order_summary(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=0, ge=0)) -> SnowflakePage:
+async def get_order_summary(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=1, gt=0)) -> SnowflakePage:
     return get_page(con,
                     ("SELECT C.C_NAME, C.C_CUSTKEY\n"
                      ",COALESCE(COUNT(O.O_ORDERKEY), 0) AS NUM_ORDERS\n"

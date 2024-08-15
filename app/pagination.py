@@ -10,7 +10,7 @@ from snowflake.connector.cursor import DictCursor
 class SnowflakePage(BaseModel):
     items: list = []
     limit: int = 0
-    page: int = 0
+    page: int = 1
     total: int = 0
     count: int = 0
 
@@ -34,7 +34,7 @@ def get_page(connection: SnowflakeConnection,
     with concurrent.futures.ThreadPoolExecutor() as executor:
         futures = [executor.submit(run_query, connection.cursor(cursor_class=DictCursor),
                                    query + " LIMIT %s OFFSET %s",
-                                   args + (limit, (page * limit + limit),)),
+                                   args + (limit, ((page - 1) * limit + limit),)),
                    ]
         if count_table_name:
             futures.append(executor.submit(run_query, connection.cursor(cursor_class=DictCursor),

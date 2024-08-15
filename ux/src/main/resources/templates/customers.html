@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head th:replace="~{fragments/head :: htmlHead}"></head>
+<body>
+<div th:replace="~{fragments/nav :: main-nav}"></div>
+
+<div class="container-fluid">
+    <h3>Order Summary</h3>
+    <p>Up-to-date order summary</p>
+    <span th:text="${module}">mod</span>
+    <div id="app" class="mx-4">
+
+        <div id="customer-table" class="table table-light"></div>
+
+    </div>
+
+</div>
+
+<script type="module">
+
+    import {TabulatorFull as Tabulator} from 'tabulator';
+
+    const table = new Tabulator("#customer-table", {
+        height: 650,
+        layout: "fitColumns",
+        pagination: true,
+        paginationMode: "remote",
+        sortMode: "remote",
+        ajaxURL: "[[${apiBaseUrl} + '/customer/list']]",
+        dataReceiveParams: {
+            "last_page": "total",
+            "data": "items",
+        },
+        // ajaxURLGenerator: function (url, config, params) {
+        //     return url + "?params=" + encodeURI(JSON.stringify(params)); //encode parameters as a json object
+        // },
+        columns: [
+            {title: "Customer Name", field: "C_NAME"},
+            {title: "Address", field: "C_ADDRESS", hozAlign: "left"},
+            {title: "Nation", field: "C_NATIONKEY", hozAlign: "left"},
+            {title: "Phone", field: "C_PHONE", hozAlign: "left"},
+            {
+                title: "Account Balance", field: "C_ACCTBAL", formatter: "money", formatterParams: {
+                    decimal: ".",
+                    thousand: ",",
+                    symbol: "$",
+                    negativeSign: true,
+                    precision: false,
+                },
+                hozAlign: "right"
+            },
+            {title: "Market", field: "C_MKTSEGMENT", hozAlign: "left"},
+            {title: "Comment", field: "C_COMMENT", hozAlign: "left"},
+        ],
+    });
+    table.on("pageLoaded", function (pageno) {
+        console.log('paged to page #', pageno);
+    });
+</script>
+</body>
+</html>

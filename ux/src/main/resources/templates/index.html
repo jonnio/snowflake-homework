@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en" data-bs-theme="light">
+<head th:replace="~{fragments/head :: htmlHead}"></head>
+
+<body>
+<div th:replace="~{fragments/nav :: main-nav}"></div>
+
+<div class="container-fluid">
+    <h3>Order Summary</h3>
+    <p>Up-to-date order summary</p>
+    <span th:text="${module}">mod</span>
+    <div id="app" class="mx-4">
+
+        <div id="order-table" class="table table-light"></div>
+
+    </div>
+
+</div>
+
+<script type="module">
+
+    import {TabulatorFull as Tabulator} from 'tabulator';
+
+    const table = new Tabulator("#order-table", {
+        height: 650,
+        layout: "fitColumns",
+        pagination: true,
+        paginationMode: "remote",
+        sortMode: "remote",
+        ajaxURL: "[[${apiBaseUrl} + '/order/summary']]",
+        dataReceiveParams: {
+            "last_page": "total",
+            "data": "items",
+        },
+        // ajaxURLGenerator: function (url, config, params) {
+        //     return url + "?params=" + encodeURI(JSON.stringify(params)); //encode parameters as a json object
+        // },
+        columns: [
+            {title: "Customer Name", field: "C_NAME"},
+            {title: "Order Count", field: "NUM_ORDERS", hozAlign: "center"},
+            {
+                title: "Avg. Cost", field: "ORDER_TOTAL_PRICE", formatter: "money", formatterParams: {
+                    decimal: ".",
+                    thousand: ",",
+                    symbol: "$",
+                    negativeSign: true,
+                    precision: false,
+                },
+                hozAlign: "right"
+            },
+            {
+                title: "Total Cost", field: "ORDER_AVERAGE_PRICE", formatter: "money", formatterParams: {
+                    decimal: ".",
+                    thousand: ",",
+                    symbol: "$",
+                    negativeSign: true,
+                    precision: false,
+                },
+                hozAlign: "right"
+            },
+            {title: "First Order", field: "FIRST_ORDER_DATE", hozAlign: "center"},
+            {title: "Last Order", field: "LAST_ORDER_DATE", hozAlign: "center"},
+            {title: "'F' Orders", field: "F_ORDERS", hozAlign: "center"},
+            {title: "'O' Orders", field: "O_ORDERS", hozAlign: "center"},
+        ],
+    });
+    table.on("pageLoaded", function (pageno) {
+        console.log('paged to page #', pageno);
+    });
+</script>
+</body>
+</html>
