@@ -27,6 +27,13 @@
         paginationMode: "remote",
         sortMode: "remote",
         ajaxURL: "[[${apiBaseUrl} + '/order/summary']]",
+        ajaxConfig: {
+            method: "GET",
+            headers: {
+                "Content-type": 'application/json; charset=utf-8',
+                "Authentication": "Bearer " + "[[${token}]]"
+            }
+        },
         dataReceiveParams: {
             "last_page": "total",
             "data": "items",
