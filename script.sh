@@ -19,8 +19,8 @@ poetry run uvicorn app.main:app --reload
 ./ux/gradlew -p ux clean build && gcloud run deploy snowflake-homework-ux --port 8081 --source ./ux
 
 
+# MY SNOWFLAKE URL
+# https://zn23616.us-east-2.aws.snowflakecomputing.com
 
-https://zn23616.us-east-2.aws.snowflakecomputing.com
 
-
-snowsql -a zn23616.us-east-2.aws -u jonnio -r ROLE_HOMEWORK -w HOMEWORK_WH -d SNOWFLAKE_SAMPLE_DATA -s TPCH_SF10 --authenticator oauth --token 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
+# snowsql -a zn23616.us-east-2.aws -u jonnio -r ROLE_HOMEWORK -w HOMEWORK_WH -d SNOWFLAKE_SAMPLE_DATA -s TPCH_SF10 --authenticator oauth --token
