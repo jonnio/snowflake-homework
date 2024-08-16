@@ -1,3 +1,4 @@
+import json
 import os
 
 import requests
@@ -18,4 +19,4 @@ def http_validate_token(credentials: HTTPAuthorizationCredentials = Depends(secu
                              , auth=(GH_CLIENT_ID, GH_SECRET)
                              , json={"access_token": credentials.credentials}
                              )
-    return credentials.credentials if 200 == response.status_code else "invalid token"
+    return json.loads(response.text) if 200 == response.status_code else ''

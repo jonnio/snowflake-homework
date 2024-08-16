@@ -19,6 +19,7 @@ public class MainController {
         model.addAttribute("apiBaseUrl", apiBaseUrl);
         model.addAttribute("module", "home");
         model.addAttribute("token", authorizedClient.getAccessToken().getTokenValue());
+        model.addAttribute("jwt", "(none)");
         return "index";
     }
 

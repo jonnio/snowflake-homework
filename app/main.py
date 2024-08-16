@@ -153,5 +153,4 @@ async def plot_orders():
 
 @app.get('/sec')
 async def security_test(token: str = Depends(http_validate_token)):
-    f = token if token else "no"
-    return {"val": f}
+    return token if token else {"invalid": "token"}

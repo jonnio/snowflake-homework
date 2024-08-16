@@ -74,6 +74,20 @@
         console.log('paged to page #', pageno);
     });
 </script>
-<span th:text="${token}"></span>
+<div th:text="${token}"></div>
+<div id="jwt-value" th:text="${jwt}"></div>
+<script>
+    jwt = 'none'
+    axios.defaults.headers.common = {'Authorization': `Bearer [[${token}]]`}
+    axios.get("[[${apiBaseUrl} + '/sec']]")
+        .then(response => {
+            jwt = response.data
+            $("#jwt-value").html(response.data)
+        })
+        .catch(error => {
+            console.log("CHECK ERROR", error)
+        })
+</script>
+
 </body>
 </html>
