@@ -1,11 +1,13 @@
 import os
 
 import snowflake.connector
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, Depends
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import HTTPBearer
 from snowflake.connector import DictCursor
 
 from app.pagination import get_page, SnowflakePage
+from app.security import http_validate_token
 
 description = """
 This is part of the Snowflake Homework for Jon Osborn 🚀
@@ -35,6 +37,8 @@ app = FastAPI(title="Snowflake Homework - Osborn",
                   "name": "Apache 2.0",
                   "url": "https://www.apache.org/licenses/LICENSE-2.0.html",
               }, )
+
+security = HTTPBearer()
 
 origins = [
     "http://localhost",
@@ -145,3 +149,9 @@ async def plot_orders():
                       " ORDER BY YEAR_QUARTER"
                       ), )
             .fetchall())
+
+
+@app.get('/sec')
+async def security_test(token: str = Depends(http_validate_token)):
+    f = token if token else "no"
+    return {"val": f}
