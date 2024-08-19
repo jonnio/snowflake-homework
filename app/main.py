@@ -82,7 +82,8 @@ async def get_tables():
 
 
 @app.get('/customer/list', tags=['customer'], description="List customers by page")
-async def get_customers(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=1, gt=0)) -> SnowflakePage:
+async def get_customers(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=1, gt=0),
+                        token: str = Depends(http_validate_token), ) -> SnowflakePage:
     return get_page(con,
                     "SELECT * FROM CUSTOMER ORDER BY C_CUSTKEY",
                     limit,
@@ -92,14 +93,16 @@ async def get_customers(limit: int = Query(default=10, le=100, gt=0), page: int 
 
 
 @app.get('/customer/{customer_id}', tags=['customer'], description="Get a customer by id")
-async def get_customer(customer_id: str):
+async def get_customer(customer_id: str, token: str = Depends(http_validate_token), ):
     cursor = con.cursor(cursor_class=DictCursor)
     sql = cursor.execute("SELECT * FROM CUSTOMER WHERE 1=1 AND C_CUSTKEY=%s", (customer_id,))
     return sql.fetchall()
 
 
 @app.get('/order/summary', tags=['order'], description="Get a summary of orders by customer")
-async def get_order_summary(limit: int = Query(default=10, le=100, gt=0), page: int = Query(default=1, gt=0)) -> SnowflakePage:
+async def get_order_summary(token: str = Depends(http_validate_token),
+                            limit: int = Query(default=10, le=100, gt=0),
+                            page: int = Query(default=1, gt=0), ) -> SnowflakePage:
     return get_page(con,
                     ("SELECT C.C_NAME, C.C_CUSTKEY\n"
                      ",COALESCE(COUNT(O.O_ORDERKEY), 0) AS NUM_ORDERS\n"
@@ -119,7 +122,7 @@ async def get_order_summary(limit: int = Query(default=10, le=100, gt=0), page: 
 
 
 @app.get('/order/{order_id}', tags=['order'], description="Get a specific order")
-async def get_order(order_id: int):
+async def get_order(order_id: int, token: str = Depends(http_validate_token), ):
     return (con
             .cursor(cursor_class=DictCursor)
             .execute("SELECT * FROM ORDERS WHERE O_ORDERKEY = %s", (order_id,))
@@ -127,7 +130,7 @@ async def get_order(order_id: int):
 
 
 @app.get('/order/{order_id}/details', tags=['order'], description="Get order details")
-async def get_order(order_id: int):
+async def get_order(order_id: int, token: str = Depends(http_validate_token), ):
     return (con
             .cursor(cursor_class=DictCursor)
             .execute(("SELECT *"
@@ -138,7 +141,7 @@ async def get_order(order_id: int):
 
 
 @app.get('/orders/plot', tags=['order'], description='Data points for plotting orders by quarter')
-async def plot_orders():
+async def plot_orders(token: str = Depends(http_validate_token), ):
     return (con
             .cursor(cursor_class=DictCursor)
             .execute(("SELECT CONCAT(YEAR(O_ORDERDATE), ' Q', QUARTER(O_ORDERDATE)) AS YEAR_QUARTER"

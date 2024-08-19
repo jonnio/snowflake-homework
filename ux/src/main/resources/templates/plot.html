@@ -91,6 +91,7 @@
                 .text("Total Orders"));
     }
 
+    axios.defaults.headers.common = {'Authorization': `Bearer [[${jwt}]]`}
     axios.get('https://snowflake-homework-bnzzfzeeua-ue.a.run.app/orders/plot')
         .then(response => {
             console.log("!!!!!!!!!!!!!!", response.data);

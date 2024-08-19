@@ -31,7 +31,7 @@
             method: "GET",
             headers: {
                 "Content-type": 'application/json; charset=utf-8',
-                "Authentication": "Bearer " + "[[${token}]]"
+                "Authorization": "Bearer " + "[[${jwt}]]"
             }
         },
         dataReceiveParams: {
@@ -78,11 +78,12 @@
 <div id="jwt-value" th:text="${jwt}"></div>
 <script>
     jwt = 'none'
-    axios.defaults.headers.common = {'Authorization': `Bearer [[${token}]]`}
-    axios.get("[[${apiBaseUrl} + '/sec']]")
+    //axios.defaults.headers.common = {'Authorization': `Bearer [[${token}]]`}
+    axios.defaults.headers.common = {'Authorization': `Bearer [[${jwt}]]`}
+    axios.get("/token")
         .then(response => {
             jwt = response.data
-            $("#jwt-value").html(response.data)
+            console.log('retrieved token!')
         })
         .catch(error => {
             console.log("CHECK ERROR", error)
