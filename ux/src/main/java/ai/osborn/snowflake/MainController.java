@@ -13,7 +13,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
 import java.util.Date;
-import java.util.Objects;
 import java.util.Optional;
 
 @Controller
@@ -24,7 +23,7 @@ public class MainController {
 
 
     @GetMapping("/")
-    public String index(@RegisteredOAuth2AuthorizedClient("github") OAuth2AuthorizedClient authorizedClient,
+    public String index(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                         @AuthenticationPrincipal OAuth2User principal, Model model) {
         model.addAttribute("apiBaseUrl", apiBaseUrl);
         model.addAttribute("module", "home");
@@ -34,7 +33,7 @@ public class MainController {
     }
 
     @GetMapping("/customers")
-    public String customers(@RegisteredOAuth2AuthorizedClient("github") OAuth2AuthorizedClient authorizedClient,
+    public String customers(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                             @AuthenticationPrincipal OAuth2User principal, Model model) {
         model.addAttribute("apiBaseUrl", apiBaseUrl);
         model.addAttribute("module", "customers");
@@ -43,20 +42,35 @@ public class MainController {
     }
 
     @GetMapping("/plot")
-    public String plot(@RegisteredOAuth2AuthorizedClient("github") OAuth2AuthorizedClient authorizedClient,
+    public String plot(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                        @AuthenticationPrincipal OAuth2User principal, Model model) {
         model.addAttribute("module", "plot");
+        model.addAttribute("apiBaseUrl", apiBaseUrl);
         model.addAttribute("jwt", getToken(authorizedClient, principal).getBody());
         return "plot";
     }
 
     @GetMapping("/token")
-    public ResponseEntity<String> getToken(@RegisteredOAuth2AuthorizedClient("github") OAuth2AuthorizedClient authorizedClient,
+    public ResponseEntity<String> getToken(@RegisteredOAuth2AuthorizedClient OAuth2AuthorizedClient authorizedClient,
                                            @AuthenticationPrincipal OAuth2User principal) {
 
         // Extracting user information from OAuth2User
-        final var username = Objects.requireNonNull(principal.getAttribute("login")).toString();
-        final var userId = Objects.requireNonNull(principal.getAttribute("id")).toString();
+        final var attributes = principal.getAttributes();
+        String username = null;
+        String userId = null;
+        if (attributes.containsKey("login")) {
+            username = attributes.get("login").toString();
+        } else if (attributes.containsKey("sub")) {
+            username = attributes.get("sub").toString();
+            userId = attributes.get("sub").toString();
+        }
+        if (attributes.containsKey("id") && userId == null) {
+            userId = attributes.get("id").toString();
+        }
+        if (username == null || userId == null) {
+            throw new SecurityException("username or id is missing");
+        }
+
         var jwt = Jwts.builder()
                 .claims()
                 .subject(username)

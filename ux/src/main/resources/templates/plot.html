@@ -91,10 +91,10 @@
                 .text("Total Orders"));
     }
 
-    axios.defaults.headers.common = {'Authorization': `Bearer [[${jwt}]]`}
-    axios.get('https://snowflake-homework-bnzzfzeeua-ue.a.run.app/orders/plot')
+    axios.defaults.headers.common = {'Authorization': 'Bearer [[${jwt}]]'}
+    axios.get("[[${apiBaseUrl} + '/orders/plot']]",)
         .then(response => {
-            console.log("!!!!!!!!!!!!!!", response.data);
+            console.log("plot data: ", response.data);
             data = response.data
             make_plot();
         })

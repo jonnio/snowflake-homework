@@ -1,7 +1,7 @@
 import os
 
 import snowflake.connector
-from fastapi import FastAPI, Query, Depends
+from fastapi import FastAPI, Query, Depends, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import HTTPBearer
 from snowflake.connector import DictCursor
@@ -155,5 +155,23 @@ async def plot_orders(token: str = Depends(http_validate_token), ):
 
 
 @app.get('/sec')
-async def security_test(token: str = Depends(http_validate_token)):
+async def security_test(request: Request,
+                        token: str = Depends(http_validate_token)):
+    # Connect to Snowflake using the JWT token
+    # header = request.headers.get('Authorization')
+    # conn = snowflake.connector.connect(
+    #     account='iloovmp-gx92880',
+    #     user='HOMEWORK_USER',
+    #     authenticator='oauth',
+    #     token=header.split(' ')[1],
+    #     warehouse='HOMEWORK_WH',
+    #     database='SNOWFLAKE_SAMPLE_DATA',
+    #     schema='TPCH_SF10',
+    # )
+    #
+    # # Query Snowflake
+    # cursor = conn.cursor()
+    # cursor.execute("SELECT CURRENT_USER(), CURRENT_ROLE()")
+    # print(cursor.fetchall())
+
     return token if token else {"invalid": "token"}

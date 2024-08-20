@@ -2,8 +2,12 @@
 
 
 ```shell
-docker build -t your-image-name .
+# docker build -t your-image-name .
 
-gcloud run deploy your-service-name --source ux
+./ux/gradlew -p ./ux clean build
+
+gcloud run deploy snowflake-homework-ux --source ./ux
+
+./ux/gradlew -p ./ux clean build && gcloud run deploy snowflake-homework-ux --source ./ux
 
 ```
